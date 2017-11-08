@@ -1,0 +1,9 @@
+*.o
+directeur
+dump
+visiteur
+controleur
+tags
+*.dSYM/
+*.log
+sujet.pdf
