@@ -1,16 +1,30 @@
 #ifndef MUSEE_H
 #define MUSEE_H
 
-#define CHECK_OR_USAGE(CHK, MSG)                                               \
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/ipc.h>
+
+#define TRY(EXPR, MSG)                                                         \
+  {                                                                            \
+    if (!(EXPR)) {                                                             \
+      fprintf(stderr, "%s:%d ", __FILE__, __LINE__);                           \
+      perror(MSG);                                                             \
+      exit(1);                                                                 \
+    }                                                                          \
+  }
+
+#define TRY_OR_USAGE(CHK, MSG)                                                 \
   {                                                                            \
     if (CHK) {                                                                 \
-      usage(argv[1]);                                                          \
+      usage(argv[0]);                                                          \
       fprintf(stderr, "\n" MSG "\n");                                          \
       return EXIT_FAILURE;                                                     \
     }                                                                          \
   }
 
-// This functions has to be defined in each program to use CHECK_OR_USAGE
+// This functions has to be defined in each program to use TRY_OR_USAGE
 void usage(char *);
 
 struct musee {
