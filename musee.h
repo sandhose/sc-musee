@@ -50,11 +50,11 @@
 #define COLOR_FATAL "\x1b[1;35;7m" // Magenta
 #define LEVEL_ERROR 1
 #define COLOR_ERROR "\x1b[1;31;7m" // Red
-#define LEVEL_WARN 2
+#define LEVEL_WARN 1
 #define COLOR_WARN "\x1b[1;33;7m" // Yellow
-#define LEVEL_INFO 3
+#define LEVEL_INFO 1
 #define COLOR_INFO "\x1b[1;32;7m" // Green
-#define LEVEL_DEBUG 4
+#define LEVEL_DEBUG 2
 #define COLOR_DEBUG "\x1b[1;36;7m" // Cyan
 
 #define FATAL(MSG) LOG(FATAL, MSG "\n")

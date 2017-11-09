@@ -100,7 +100,9 @@ int fermer(void) {
 }
 
 int supprimer(void) {
+  INFO("Suppression du musée…");
   delete_shm();
   delete_sem();
+  INFO("Le musée est supprimé.");
   return EXIT_SUCCESS;
 }

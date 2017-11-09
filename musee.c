@@ -18,11 +18,12 @@ int create_shm(void) {
   key_t k = token();
   int shmid = shmget(k, 0, 0);
   if (shmid > -1) {
-    FATAL("Un musée existe déjà.");
-    exit(EXIT_FAILURE);
+    WARN("Un espace de mémoire partagé existe déjà, suppression de l'ancien "
+         "espace.");
+    TRY_SYS(shmctl(shmid, IPC_RMID, NULL), "shmctl");
+  } else {
+    TRY(errno == ENOENT, "shmget");
   }
-
-  TRY(errno == ENOENT, "shmget");
 
   TRY_SYS(shmid = shmget(k, sizeof(struct musee), IPC_CREAT | 0666), "shmget");
   DEBUGF("shmid = %d", shmid);
@@ -52,11 +53,12 @@ int create_sem(void) {
   key_t k = token();
   int semid = semget(k, 0, 0);
   if (semid > -1) {
-    fprintf(stderr, "La sémaphore existe déjà.\n");
-    exit(EXIT_FAILURE);
+    WARN("Un ensemble de sémaphores existe déjà, supression de l'ancien "
+         "ensemble.")
+    TRY_SYS(semctl(semid, 0, IPC_RMID), "semctl");
+  } else {
+    TRY(errno == ENOENT, "semget");
   }
-
-  TRY(errno == ENOENT, "semget");
 
   TRY_SYS(semid = semget(k, 4, IPC_CREAT | 0666), "semget");
   TRY_SYS(semctl(semid, 0, SETVAL, 1), "semctl"); // 1 = Closed
