@@ -2,7 +2,9 @@
 
 static int get_sem_val(int, unsigned short);
 
-void usage(const char *prgname) { fprintf(stderr, "usage: %s\n", prgname); }
+static void usage(const char *prgname) {
+  fprintf(stderr, "usage: %s\n", prgname);
+}
 
 int get_sem_val(int semid, unsigned short which) {
   int val;

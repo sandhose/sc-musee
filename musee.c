@@ -1,5 +1,13 @@
 #include "musee.h"
 
+int get_loglevel(void) {
+  char *env = getenv("DEBUG_MUSEE");
+  if (env == NULL)
+    return 0;
+  int level = atoi(env);
+  return level >= 0 ? level : 0;
+}
+
 key_t token(void) {
   key_t k;
   TRY_SYS(k = ftok("/etc/passwd", 0), "ftok");
@@ -10,13 +18,14 @@ int create_shm(void) {
   key_t k = token();
   int shmid = shmget(k, 0, 0);
   if (shmid > -1) {
-    fprintf(stderr, "Un musée existe déjà.\n");
+    FATAL("Un musée existe déjà.");
     exit(EXIT_FAILURE);
   }
 
   TRY(errno == ENOENT, "shmget");
 
   TRY_SYS(shmid = shmget(k, sizeof(struct musee), IPC_CREAT | 0666), "shmget");
+  DEBUGF("shmid = %d", shmid);
   return shmid;
 }
 
@@ -24,6 +33,7 @@ int get_shm(void) {
   key_t k = token();
   int shmid;
   TRY_SYS(shmid = shmget(k, 0, 0), "shmget");
+  DEBUGF("shmid = %d", shmid);
   return shmid;
 }
 
@@ -50,6 +60,7 @@ int create_sem(void) {
 
   TRY_SYS(semid = semget(k, 4, IPC_CREAT | 0666), "semget");
   TRY_SYS(semctl(semid, 0, SETVAL, 1), "semctl"); // 1 = Closed
+  DEBUGF("semid = %d", semid);
   return semid;
 }
 
@@ -57,6 +68,7 @@ int get_sem(void) {
   key_t k = token();
   int semid;
   TRY_SYS(semid = semget(k, 0, 0), "semget");
+  DEBUGF("semid = %d", semid);
   return semid;
 }
 

@@ -27,7 +27,7 @@
 #define TRY(EXPR, MSG)                                                         \
   {                                                                            \
     if (!(EXPR)) {                                                             \
-      perror(__FILE__ ":" S_(__LINE__) " " MSG);                               \
+      perror(LOG_FMT(FATAL, MSG));                                             \
       exit(1);                                                                 \
     }                                                                          \
   }
@@ -42,8 +42,43 @@
     }                                                                          \
   }
 
-// This functions has to be defined in each program to use TRY_OR_USAGE
-void usage(const char *);
+#ifndef LOG_LEVEL
+#define LOG_LEVEL get_loglevel()
+#endif
+
+#define LEVEL_FATAL 0
+#define COLOR_FATAL "\x1b[1;35;7m" // Magenta
+#define LEVEL_ERROR 1
+#define COLOR_ERROR "\x1b[1;31;7m" // Red
+#define LEVEL_WARN 2
+#define COLOR_WARN "\x1b[1;33;7m" // Yellow
+#define LEVEL_INFO 3
+#define COLOR_INFO "\x1b[1;32;7m" // Green
+#define LEVEL_DEBUG 4
+#define COLOR_DEBUG "\x1b[1;36;7m" // Cyan
+
+#define FATAL(MSG) LOG(FATAL, MSG "\n")
+#define FATALF(MSG, ...) LOG(FATAL, MSG "\n", __VA_ARGS__)
+#define ERROR(MSG) LOG(ERROR, MSG "\n")
+#define ERRORF(MSG, ...) LOG(ERROR, MSG "\n", __VA_ARGS__)
+#define WARN(MSG) LOG(WARN, MSG "\n")
+#define WARNF(MSG, ...) LOG(WARN, MSG "\n", __VA_ARGS__)
+#define INFO(MSG) LOG(INFO, MSG "\n")
+#define INFOF(MSG, ...) LOG(INFO, MSG "\n", __VA_ARGS__)
+#define DEBUG(MSG) LOG(DEBUG, MSG "\n")
+#define DEBUGF(MSG, ...) LOG(DEBUG, MSG "\n", __VA_ARGS__)
+
+#define LEVEL_FMT(LEVEL) COLOR_##LEVEL " " #LEVEL " \x1b[0m"
+#define FILE_FMT "\x1b[90m" __FILE__ ":" S_(__LINE__) "\x1b[0m"
+#define LOG_FMT(LEVEL, ...) LEVEL_FMT(LEVEL) "\t" FILE_FMT "\t" __VA_ARGS__
+#define LOG(LEVEL, ...)                                                        \
+  {                                                                            \
+    if (LEVEL_##LEVEL <= LOG_LEVEL) {                                          \
+      fprintf(stderr, LOG_FMT(LEVEL, __VA_ARGS__));                            \
+    }                                                                          \
+  }
+
+int get_loglevel(void);
 
 key_t token(void);
 int create_shm(void);
