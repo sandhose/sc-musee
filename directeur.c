@@ -65,13 +65,13 @@ int creer(int capacite, int file) {
 
 int ouvrir(void) {
   int semid = get_sem();
-  TRY(semctl(semid, 0, SETVAL, 0) != -1, "semctl");
+  TRY_SYS(semctl(semid, 0, SETVAL, 0), "semctl");
   return EXIT_SUCCESS;
 }
 
 int fermer(void) {
   int semid = get_sem();
-  TRY(semctl(semid, 0, SETVAL, 1) != -1, "semctl");
+  TRY_SYS(semctl(semid, 0, SETVAL, 1), "semctl");
   return EXIT_SUCCESS;
 }
 

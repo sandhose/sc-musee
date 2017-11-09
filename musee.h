@@ -19,13 +19,14 @@
       exit(1);                                                                 \
     }                                                                          \
   }
+#define TRY_SYS(EXPR, MSG) TRY((int)(EXPR) != -1, MSG)
 
 #define TRY_OR_USAGE(CHK, MSG)                                                 \
   {                                                                            \
     if (!(CHK)) {                                                              \
       usage(argv[0]);                                                          \
       fprintf(stderr, "\n" MSG "\n");                                          \
-      return EXIT_FAILURE;                                                     \
+      exit(1);                                                                 \
     }                                                                          \
   }
 

@@ -11,7 +11,8 @@ int main(int argc, char *argv[]) {
 
   // Waiting until the first semaphore goes to zero
   struct sembuf s[1] = {{0, 0, 0}};
-  TRY(semop(semid, s, 1) != -1, "semop");
+  TRY_SYS(semop(semid, s, 1), "semop");
+  TRY_SYS(semctl(semid, 1, SETVAL, m->capacite), "semctl");
   printf("Le musée est ouvert !\n");
 
   return 0;
