@@ -1,15 +1,13 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "musee.h"
 
-int creer(int, int);
-int ouvrir(void);
-int fermer(void);
-int supprimer(void);
+static int creer(int, int);
+static int ouvrir(void);
+static int fermer(void);
+static int supprimer(void);
 
-void usage(char *prgname) {
+void usage(const char *prgname) {
   fprintf(stderr,
           "usage: %s <command>\n"
           "Commande disponibles:\n"
@@ -21,31 +19,31 @@ void usage(char *prgname) {
 }
 
 int main(int argc, char *argv[]) {
-  TRY_OR_USAGE(argc < 2, "Il faut au moins un argument");
+  TRY_OR_USAGE(argc > 1, "Il faut au moins un argument");
 
   char *subcommand = argv[1];
   if (strcmp(subcommand, "creer") == 0) {
-    TRY_OR_USAGE(argc != 4,
+    TRY_OR_USAGE(argc == 4,
                  "`creer' a besoin de deux arguments supplémentaires.");
 
     char *endptr = NULL;
     long capacite = strtol(argv[2], &endptr, 10);
-    TRY_OR_USAGE(endptr == argv[2] || *endptr != '\0' || capacite < 1,
+    TRY_OR_USAGE(endptr != argv[2] && *endptr == '\0' && capacite > 0,
                  "La capacité doit être un nombre strictement positif.");
 
     long file = strtol(argv[3], &endptr, 10);
-    TRY_OR_USAGE(endptr == argv[2] || *endptr != '\0' || file < 1,
+    TRY_OR_USAGE(endptr != argv[2] && *endptr == '\0' && file > 0,
                  "La file doit être un nombre strictement positif.");
 
     return creer((int)capacite, (int)file);
   } else if (strcmp(subcommand, "ouvrir") == 0) {
-    TRY_OR_USAGE(argc != 2, "`ouvrir' ne prend pas d'argument.");
+    TRY_OR_USAGE(argc == 2, "`ouvrir' ne prend pas d'argument.");
     return ouvrir();
   } else if (strcmp(subcommand, "fermer") == 0) {
-    TRY_OR_USAGE(argc != 2, "`fermer' ne prend pas d'argument.");
+    TRY_OR_USAGE(argc == 2, "`fermer' ne prend pas d'argument.");
     return fermer();
   } else if (strcmp(subcommand, "supprimer") == 0) {
-    TRY_OR_USAGE(argc != 2, "`supprimer' ne prend pas d'argument.");
+    TRY_OR_USAGE(argc == 2, "`supprimer' ne prend pas d'argument.");
     return supprimer();
   } else {
     printf("Commande inconnue `%s'\n", subcommand);
