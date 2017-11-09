@@ -53,10 +53,30 @@ int main(int argc, char *argv[]) {
 }
 
 int creer(int capacite, int file) {
-  printf("Capacité: %d, file: %d\n", capacite, file);
+  int shmid = create_shm();
+  int semid = create_sem();
+  struct musee *m = get_musee(shmid);
+  m->capacite = capacite;
+  m->file = file;
+  printf("Capacité: %d, file: %d, shmid: %d, semid: %d\n", capacite, file,
+         shmid, semid);
   return EXIT_SUCCESS;
 }
 
-int ouvrir(void) { return EXIT_SUCCESS; }
-int fermer(void) { return EXIT_SUCCESS; }
-int supprimer(void) { return EXIT_SUCCESS; }
+int ouvrir(void) {
+  int semid = get_sem();
+  TRY(semctl(semid, 0, SETVAL, 0) != -1, "semctl");
+  return EXIT_SUCCESS;
+}
+
+int fermer(void) {
+  int semid = get_sem();
+  TRY(semctl(semid, 0, SETVAL, 1) != -1, "semctl");
+  return EXIT_SUCCESS;
+}
+
+int supprimer(void) {
+  delete_shm();
+  delete_sem();
+  return EXIT_SUCCESS;
+}

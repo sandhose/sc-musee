@@ -30,12 +30,22 @@
   }
 
 // This functions has to be defined in each program to use TRY_OR_USAGE
-void usage(char *);
+void usage(const char *);
+
+key_t token(void);
+int create_shm(void);
+void delete_shm(void);
+int get_shm(void);
+
+int create_sem(void);
+void delete_sem(void);
+int get_sem(void);
+
+struct musee *get_musee(int);
 
 struct musee {
   int capacite;
   int file;
-  bool ouvert;
 };
 
 #endif
