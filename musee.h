@@ -9,6 +9,18 @@
 #include <sys/sem.h>
 #include <sys/shm.h>
 
+#define SEM_CLOSED 0
+#define SEM_SLEEP 1
+#define SEM_CAPACITY 2
+#define SEM_INSIDE 3
+
+// Run multiple ops on semaphores. SEMOPS(semid, {id, 0, 0}, {id, 1, 0})
+#define SEMOPS(SEMID, ...)                                                     \
+  {                                                                            \
+    struct sembuf s[] = {__VA_ARGS__};                                         \
+    TRY_SYS(semop(SEMID, s, sizeof(s) / sizeof(struct sembuf)), "semop");      \
+  }
+
 // Double expansion technique to convert __LINE__ into string literal
 #define S(x) #x
 #define S_(x) S(x)

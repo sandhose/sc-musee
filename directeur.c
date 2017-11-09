@@ -6,6 +6,7 @@ static int creer(int, int);
 static int ouvrir(void);
 static int fermer(void);
 static int supprimer(void);
+static int tick(void);
 
 void usage(const char *prgname) {
   fprintf(stderr,
@@ -42,6 +43,9 @@ int main(int argc, char *argv[]) {
   } else if (strcmp(subcommand, "fermer") == 0) {
     TRY_OR_USAGE(argc == 2, "`fermer' ne prend pas d'argument.");
     return fermer();
+  } else if (strcmp(subcommand, "tick") == 0) {
+    TRY_OR_USAGE(argc == 2, "`tick' ne prend pas d'argument.");
+    return tick();
   } else if (strcmp(subcommand, "supprimer") == 0) {
     TRY_OR_USAGE(argc == 2, "`supprimer' ne prend pas d'argument.");
     return supprimer();
@@ -65,13 +69,20 @@ int creer(int capacite, int file) {
 
 int ouvrir(void) {
   int semid = get_sem();
-  TRY_SYS(semctl(semid, 0, SETVAL, 0), "semctl");
+  TRY_SYS(semctl(semid, SEM_CLOSED, SETVAL, 0), "semctl");
+  return EXIT_SUCCESS;
+}
+
+int tick(void) {
+  int semid = get_sem();
+  TRY_SYS(semctl(semid, SEM_SLEEP, SETVAL, 0), "semctl");
   return EXIT_SUCCESS;
 }
 
 int fermer(void) {
   int semid = get_sem();
-  TRY_SYS(semctl(semid, 0, SETVAL, 1), "semctl");
+  TRY_SYS(semctl(semid, SEM_CLOSED, SETVAL, 1), "semctl");
+  TRY_SYS(semctl(semid, SEM_SLEEP, SETVAL, 0), "semctl");
   return EXIT_SUCCESS;
 }
 

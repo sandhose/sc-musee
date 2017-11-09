@@ -48,7 +48,7 @@ int create_sem(void) {
 
   TRY(errno == ENOENT, "semget");
 
-  TRY_SYS(semid = semget(k, 1, IPC_CREAT | 0666), "semget");
+  TRY_SYS(semid = semget(k, 4, IPC_CREAT | 0666), "semget");
   TRY_SYS(semctl(semid, 0, SETVAL, 1), "semctl"); // 1 = Closed
   return semid;
 }
