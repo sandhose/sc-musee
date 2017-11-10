@@ -28,11 +28,11 @@ int main(int argc, char *argv[]) {
 
   short last_inside = 0, inside;
   while (get_sem_val(semid, SEM_CLOSED) == 0) {
-    INFO("Tick.");
+    DEBUG("Tick.");
 
     inside = (short)get_sem_val(semid, SEM_INSIDE);
     if (last_inside > inside) {
-      INFOF("Adding %d capacity\n", last_inside - inside);
+      INFOF("%d personnes viennent de sortir", last_inside - inside);
       SEMOPS(semid, {SEM_CAPACITY, last_inside - inside, 0});
     }
     last_inside = inside;
