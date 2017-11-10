@@ -6,16 +6,15 @@ static int creer(int, int);
 static int ouvrir(void);
 static int fermer(void);
 static int supprimer(void);
-static int tick(void);
 
 static void usage(const char *prgname) {
   fprintf(stderr,
           "usage: %s <command>\n"
-          "Commande disponibles:\n"
-          "  creer <capacité> <file>  foo\n"
-          "  ouvrir                   foo\n"
-          "  fermer                   foo\n"
-          "  supprimer                foo\n",
+          "Commandes disponibles:\n"
+          "  creer <capacité> <file>  Créé un nouveau musée\n"
+          "  ouvrir                   Ouvre le musée\n"
+          "  fermer                   Ferme le musée\n"
+          "  supprimer                Supprime le musée\n",
           prgname);
 }
 
@@ -49,10 +48,6 @@ int main(int argc, char *argv[]) {
     DEBUG("Sous-commande `fermer'")
     TRY_OR_USAGE(argc == 2, "`fermer' ne prend pas d'argument.");
     return fermer();
-  } else if (strcmp(subcommand, "tick") == 0) {
-    DEBUG("Sous-commande `tick'")
-    TRY_OR_USAGE(argc == 2, "`tick' ne prend pas d'argument.");
-    return tick();
   } else if (strcmp(subcommand, "supprimer") == 0) {
     DEBUG("Sous-commande `supprimer'")
     TRY_OR_USAGE(argc == 2, "`supprimer' ne prend pas d'argument.");
@@ -81,12 +76,6 @@ int ouvrir(void) {
   int semid = get_sem();
   TRY_SYS(semctl(semid, SEM_CLOSED, SETVAL, 0), "semctl");
   INFO("Le musée est ouvert.");
-  return EXIT_SUCCESS;
-}
-
-int tick(void) {
-  int semid = get_sem();
-  TRY_SYS(semctl(semid, SEM_SLEEP, SETVAL, 0), "semctl");
   return EXIT_SUCCESS;
 }
 
