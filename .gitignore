@@ -6,4 +6,5 @@ controleur
 tags
 *.dSYM/
 *.log
+*.gc*
 sujet.pdf
