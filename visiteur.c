@@ -14,11 +14,16 @@ int main(int argc, char *argv[]) {
                "La durée doit être un nombre strictement positif.");
   struct timespec t = {sleep_ms / 1000, (sleep_ms % 1000) * 1000};
 
+  struct musee *m = get_musee(get_shm());
   int semid = get_sem();
 
   int waiting;
   TRY_SYS(waiting = semctl(semid, SEM_CAPACITY, GETNCNT), "semctl");
   INFOF("%d personnes sont en attente.", waiting);
+  if (waiting >= m->file) {
+    ERROR("Trop de personnes attendent, je ne rentre pas dans la file.");
+    return EXIT_FAILURE;
+  }
   SEMOPS(semid, {SEM_CAPACITY, -1, 0}, {SEM_INSIDE, 1, 0}, {SEM_SLEEP, -1, 0});
   INFO("Je suis dans le musée");
   nanosleep(&t, NULL);

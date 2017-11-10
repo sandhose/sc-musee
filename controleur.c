@@ -27,10 +27,9 @@ int main(int argc, char *argv[]) {
   DEBUG("Enregistre la capacité initiale");
 
   short last_inside = 0, inside;
-  while (get_sem_val(semid, SEM_CLOSED) == 0) {
-    DEBUG("Tick.");
-
+  while (get_sem_val(semid, SEM_CLOSED) == 0 || last_inside > 0) {
     inside = (short)get_sem_val(semid, SEM_INSIDE);
+    DEBUGF("Tick. %d personnes dans le musée.", inside);
     if (last_inside > inside) {
       INFOF("%d personnes viennent de sortir", last_inside - inside);
       SEMOPS(semid, {SEM_CAPACITY, last_inside - inside, 0});
