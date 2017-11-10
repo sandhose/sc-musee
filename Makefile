@@ -21,9 +21,14 @@
 
 COV = -coverage
 
-CFLAGS = -g -Wall -Wextra -pedantic -std=c99 -Werror -Weverything $(COVERAGE)
+CFLAGS = -g -Wall -Wextra -pedantic -std=gnu99 -Werror $(COVERAGE)
 
 PROGS = directeur controleur visiteur dump
+TESTS = test-100.sh test-110.sh test-120.sh test-130.sh test-140.sh test-150.sh test-160.sh
+SOURCES = $(PROGS:%=%.c) musee.c musee.h
+
+DISTNAME = gliech
+DISTFILES = $(SOURCES) Makefile ftest.sh $(TESTS)
 
 all: $(PROGS)
 
@@ -51,11 +56,11 @@ gcov:
 test: test-sans-valgrind
 
 test-sans-valgrind: all
-	@for i in test-*.sh ; do echo $$i ; sh $$i || exit 1 ; done
+	@for i in $(TESTS) ; do echo $$i ; sh $$i || exit 1 ; done
 
 test-avec-valgrind: all
 	VALGRIND="valgrind -q" ; export VALGRIND ; \
-	    for i in test-*.sh ; do echo $$i ; sh $$i || exit 1 ; done
+	    for i in $(TESTS) ; do echo $$i ; sh $$i || exit 1 ; done
 
 couverture-et-tests: clean coverage test gcov
 
@@ -67,3 +72,10 @@ clean:
 	rm -f *.gc*
 	rm -f *.log
 	rm -f tags core
+
+dist: $(DISTNAME).tar.gz
+
+$(DISTNAME).tar.gz: $(DISTFILES)
+	ln -sf . $(DISTNAME)
+	tar -czvf $@ $(^:%=$(DISTNAME)/%)
+	rm $(DISTNAME)
