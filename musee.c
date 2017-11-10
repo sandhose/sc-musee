@@ -45,7 +45,7 @@ void delete_shm(void) {
 
 struct musee *get_musee(int shmid) {
   void *m;
-  TRY_SYS(m = shmat(shmid, NULL, 0), "shmat");
+  TRY((m = shmat(shmid, NULL, 0)) != (void *)-1, "shmat");
   return (struct musee *)m;
 }
 

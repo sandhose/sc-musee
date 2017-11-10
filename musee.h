@@ -5,7 +5,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/ipc.h>
 #include <sys/sem.h>
 #include <sys/shm.h>
 
@@ -75,6 +74,7 @@
   {                                                                            \
     if (LEVEL_##LEVEL <= LOG_LEVEL) {                                          \
       fprintf(stderr, LOG_FMT(LEVEL, __VA_ARGS__));                            \
+      fflush(stderr);                                                          \
     }                                                                          \
   }
 
