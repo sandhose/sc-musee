@@ -6,7 +6,7 @@
 
 . ./ftest.sh
 
-CAPA=5			# capacité du musée
+CAPA=10			# capacité du musée
 QSZ=5			# file d'attente
 DURVIS=2000		# durée d'une visite
 
@@ -33,8 +33,8 @@ $V ./dump >&2 && fail "dump a fonctionné sans musée"
 $V ./directeur creer 1 2 >&2
 
 $V ./dump 2>$TMP || fail "dump n'a pas foncitonné avec musée"
-grep -iq "capa.*\<1\>" $TMP || fail "dump ne donne pas la bonne capacité"
-grep -iq "file.*\<2\>"  $TMP || fail "dump ne donne pas la bonne file"
+grep -iq "capacité.*\<1\>" $TMP || fail "dump ne donne pas la bonne capacité"
+grep -iq "file.*\<2\>"     $TMP || fail "dump ne donne pas la bonne file"
 grep -iq "ouvert"          $TMP && fail "dump affiche le musée ouvert"
 grep -iq "attente.*\<0\>"  $TMP || fail "dump affiche des personnes en attente"
 
@@ -42,7 +42,8 @@ grep -iq "attente.*\<0\>"  $TMP || fail "dump affiche des personnes en attente"
 $V ./directeur creer $CAPA $QSZ >&2
 
 $V ./dump 2>$TMP || fail "dump n'a pas foncitonné avec musée"
-grep -iq "capa.*\<$CAPA\>" $TMP || fail "dump ne donne pas la bonne capacité"
+grep -iq "capac.*\<$CAPA\>" $TMP || fail "dump ne donne pas la bonne capacité"
+grep -iq "actuelle.*\<0\>" $TMP || fail "dump: le musée accepte du monde fermé"
 grep -iq "file.*\<$QSZ\>"  $TMP || fail "dump ne donne pas la bonne file"
 grep -iq "ouvert"          $TMP && fail "dump affiche le musée ouvert"
 grep -iq "attente.*\<0\>"  $TMP || fail "dump affiche des personnes en attente"
@@ -54,9 +55,9 @@ sleep 0.1			# délai pour laisser le contrôleur démarrer
 
 ps_existe $PIDCONTROLEUR || fail "controleur pas démarré correctement"
 
-# lancer $CAPA visiteurs : devraient durer $DURVIS exactement
+# lancer $QSZ visiteurs : devraient durer $DURVIS exactement
 PIDVISITEURS=""
-for v in $(seq 1 $CAPA)
+for v in $(seq 1 $QSZ)
 do
     ./visiteur $DURVIS >&2 &
     PIDVISITEURS="$PIDVISITEURS $!"
@@ -64,7 +65,7 @@ done
 sleep 0.1			# délai pour laisser les visiteurs démarrer
 
 $V ./dump 2>$TMP || fail "dump n'a pas foncitonné avec musée"
-grep -iq "attente.*\<$CAPA\>" $TMP || fail "dump: pas de personnes en attente"
+grep -iq "attente.*\<$QSZ\>" $TMP || fail "dump: pas de personnes en attente"
 
 # ouvrir le musée
 $V ./directeur ouvrir >&2
@@ -76,7 +77,8 @@ sleep 1
 $V ./dump 2>$TMP || fail "dump n'a pas foncitonné avec musée"
 grep -iq "ouvert" $TMP || fail "dump n'affiche pas le musée ouvert"
 grep -iq "attente.*\<0\>" $TMP || fail "dump: des visiteurs attendent toujours"
-grep -iq "intérieur.*\<$CAPA\>" $TMP || fail "un visiteur n'est pas dedans"
+grep -iq "intérieur.*\<$QSZ\>" $TMP || fail "un visiteur n'est pas dedans"
+grep -iq "actuelle.*\<$((CAPA-QSZ))\>" $TMP || fail "trop de capacité"
 
 # on refermer le musée
 $V ./directeur fermer >&2
@@ -93,7 +95,8 @@ done
 $V ./dump 2>$TMP || fail "dump n'a pas foncitonné avec musée"
 grep -iq "fermé" $TMP || fail "dump n'affiche pas le musée fermé"
 grep -iq "attente.*\<0\>" $TMP || fail "dump: des visiteurs attendent toujours"
-grep -iq "intérieur.*\<$CAPA\>" $TMP || fail "un visiteur n'est pas dedans"
+grep -iq "intérieur.*\<$QSZ\>" $TMP || fail "un visiteur n'est pas dedans"
+grep -iq "capac.*\<$CAPA\>" $TMP || fail "dump ne donne pas la bonne capacité"
 
 # attendre la fin du premier ensemble de visiteurs
 sleep $((DURVIS/1000))

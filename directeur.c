@@ -75,6 +75,7 @@ int ouvrir(void) {
   INFO("Ouverture du musée…");
   int semid = get_sem();
   TRY_SYS(semctl(semid, SEM_CLOSED, SETVAL, 0), "semctl");
+  TRY_SYS(semctl(semid, SEM_SLEEP, SETVAL, 0), "semctl");
   INFO("Le musée est ouvert.");
   return EXIT_SUCCESS;
 }
