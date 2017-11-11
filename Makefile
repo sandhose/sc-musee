@@ -28,7 +28,7 @@ TESTS = test-100.sh test-110.sh test-120.sh test-130.sh test-140.sh test-150.sh 
 SOURCES = $(PROGS:%=%.c) musee.c musee.h
 
 DISTNAME = gliech
-DISTFILES = $(SOURCES) Makefile ftest.sh $(TESTS)
+DISTFILES = $(SOURCES) rapport.md rapport.pdf Makefile ftest.sh $(TESTS)
 
 all: $(PROGS)
 
@@ -47,6 +47,9 @@ coverage: clean
 
 gcov:
 	gcov *.c
+
+%.pdf: %.md
+	pandoc --pdf-engine=xelatex -o $@ $<
 
 
 # Par défaut, "test" lance les tests sans valgrind.
@@ -72,6 +75,7 @@ clean:
 	rm -f *.gc*
 	rm -f *.log
 	rm -f tags core
+	rm -f *.pdf
 
 dist: $(DISTNAME).tar.gz
 

@@ -7,5 +7,5 @@ tags
 *.dSYM/
 *.log
 *.gc*
-sujet.pdf
+*.pdf
 *.tar.gz
