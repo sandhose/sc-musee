@@ -1,5 +1,5 @@
 ---
-title: Rendu du TP 3 – Systèmes concurents
+title: Rendu du TP 3 – Systèmes concurrents
 author: Quentin [Gliech]{.smallcaps}
 lang: fr
 ---
@@ -39,7 +39,9 @@ Les seules informations stockées dans l'espace de mémoire partagé sont la cap
 
 # Macros et logs
 
-Les logs sont au format `[niveau] [fichier]:[ligne] [message]` (et en couleur), avec `niveau` pouvant être `FATAL`, `ERROR`, `WARN`, `INFO` ou `DEBUG`.
+Les logs sont au format `[niveau] [fichier]:[ligne] [message]` (et en couleur[^color]), avec `niveau` pouvant être `FATAL`, `ERROR`, `WARN`, `INFO` ou `DEBUG`.
+
+[^color]: Désactivable en compilant avec `-DNO_COLOR`.
 
 Chaque niveau de message a une macro avec (ex: `DEBUGF(message, ...)`) et sans format (ex: `DEBUG(message)`).
 
@@ -51,11 +53,11 @@ Les macros sont construits de sorte à ce qu'ils ne fassent qu'un seul appel à 
 
 ---
 
-La macro `TRY(condition, message)` va vérifier que la `condition` est vraie, et si ce n'est pas le cas, `exit` le programme en appelant `perror` avant.
+La macro `ASSERT(condition, message)` va vérifier que la `condition` est vraie, et si ce n'est pas le cas, `exit` le programme en appelant `perror` avant.
 
-`TRY_SYS(valeur, msg)` appelle `TRY` avec comme condition `valeur != -1`, utile pour tous les appels aux primitives système et fonctions de bibliothèque.
+`ASSERT_SYS(valeur, msg)` appelle `ASSERT` avec comme condition `valeur != -1`, utile pour tous les appels aux primitives système et fonctions de bibliothèque.
 
-La macro `TRY_USAGE(condition, message)` fonctionne de la même manière que `TRY`, mais affiche l'`usage` plutôt qu'un message de `perror`.
+La macro `ASSERT_USAGE(condition, message)` fonctionne de la même manière que `ASSERT`, mais affiche l'`usage` plutôt qu'un message de `perror`.
 
 ---
 
@@ -71,4 +73,4 @@ Tous les tests fonctionnent fournis fonctionnent.
 
 J'ai ajouté un test qui teste la sortie de `dump`, et vérifie (entre autre) que le contrôleur ne s'arrête pas tant qu'il y a encore des visiteurs à la fermeture.
 
-Les tests couvrent plus de 95% du code.
+Les tests couvrent plus de 97% du code.

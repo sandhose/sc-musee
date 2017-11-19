@@ -18,12 +18,12 @@
 #define SEMOPS(SEMID, ...)                                                     \
   {                                                                            \
     struct sembuf s[] = {__VA_ARGS__};                                         \
-    TRY_SYS(semop(SEMID, s, sizeof(s) / sizeof(struct sembuf)), "semop");      \
+    ASSERT_SYS(semop(SEMID, s, sizeof(s) / sizeof(struct sembuf)), "semop");   \
   }
 
 // Macro qui vérifie une expression EXPR, et l'erreur avec un message si elle
 // est fausse + exit.
-#define TRY(EXPR, MSG)                                                         \
+#define ASSERT(EXPR, MSG)                                                      \
   {                                                                            \
     if (!(EXPR)) {                                                             \
       perror(LOG_FMT(FATAL, MSG));                                             \
@@ -31,11 +31,12 @@
     }                                                                          \
   }
 
-// Similaire à TRY, mais compare directement à -1 (pour les primitives système)
-#define TRY_SYS(EXPR, MSG) TRY((int)(EXPR) != -1, MSG)
+// Similaire à ASSERT, mais compare directement à -1 (pour les primitives
+// système)
+#define ASSERT_SYS(EXPR, MSG) ASSERT((int)(EXPR) != -1, MSG)
 
-// Similaire à TRY, mais affiche le message d'usage (sans perror)
-#define TRY_OR_USAGE(CHK, MSG)                                                 \
+// Similaire à ASSERT, mais affiche le message d'usage (sans perror)
+#define ASSERT_OR_USAGE(CHK, MSG)                                              \
   {                                                                            \
     if (!(CHK)) {                                                              \
       usage(argv[0]);                                                          \

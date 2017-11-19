@@ -6,13 +6,13 @@ static void usage(const char *prgname) {
 }
 
 int main(int argc, char *argv[]) {
-  TRY_OR_USAGE(argc == 2, "Requiert un argument.");
+  ASSERT_OR_USAGE(argc == 2, "Requiert un argument.");
 
   // Parse le temps en argument, et construit la structure timespec
   char *endptr = NULL;
   long sleep_ms = strtol(argv[1], &endptr, 10);
-  TRY_OR_USAGE(endptr != argv[1] && *endptr == '\0' && sleep_ms > 0,
-               "La durée doit être un nombre strictement positif.");
+  ASSERT_OR_USAGE(endptr != argv[1] && *endptr == '\0' && sleep_ms > 0,
+                  "La durée doit être un nombre strictement positif.");
   struct timespec t = {sleep_ms / 1000, (sleep_ms % 1000) * 1000};
 
   struct musee *m = get_musee(get_shm(), true);
@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
 
   // Vérifie le nombre de personnes en attente
   int waiting;
-  TRY_SYS(waiting = semctl(semid, SEM_CAPACITY, GETNCNT), "semctl");
+  ASSERT_SYS(waiting = semctl(semid, SEM_CAPACITY, GETNCNT), "semctl");
   INFOF("%d personnes sont en attente.", waiting);
   if (waiting >= m->file) {
     ERROR("Trop de personnes attendent, je ne rentre pas dans la file.");

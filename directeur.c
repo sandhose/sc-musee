@@ -23,37 +23,37 @@ int main(int argc, char *argv[]) {
   // La fonction main va parser tous les arguments, puis appeler les fonctions
   // correspondantes.
   DEBUG("Interprétation des arguments.");
-  TRY_OR_USAGE(argc > 1, "Il faut au moins un argument.");
+  ASSERT_OR_USAGE(argc > 1, "Il faut au moins un argument.");
 
   char *subcommand = argv[1];
   if (strcmp(subcommand, "creer") == 0) {
     DEBUG("Sous-commande `creer'")
-    TRY_OR_USAGE(argc == 4,
-                 "`creer' a besoin de deux arguments supplémentaires.");
+    ASSERT_OR_USAGE(argc == 4,
+                    "`creer' a besoin de deux arguments supplémentaires.");
 
     char *endptr = NULL;
     long capacite = strtol(argv[2], &endptr, 10);
-    TRY_OR_USAGE(endptr != argv[2] && *endptr == '\0' && capacite > 0,
-                 "La capacité doit être un nombre strictement positif.");
+    ASSERT_OR_USAGE(endptr != argv[2] && *endptr == '\0' && capacite > 0,
+                    "La capacité doit être un nombre strictement positif.");
     DEBUGF("Capacité = %lu", capacite);
 
     long file = strtol(argv[3], &endptr, 10);
-    TRY_OR_USAGE(endptr != argv[2] && *endptr == '\0' && file > 0,
-                 "La file doit être un nombre strictement positif.");
+    ASSERT_OR_USAGE(endptr != argv[2] && *endptr == '\0' && file > 0,
+                    "La file doit être un nombre strictement positif.");
     DEBUGF("File = %lu", file);
 
     return creer((int)capacite, (int)file);
   } else if (strcmp(subcommand, "ouvrir") == 0) {
     DEBUG("Sous-commande `ouvrir'")
-    TRY_OR_USAGE(argc == 2, "`ouvrir' ne prend pas d'argument.");
+    ASSERT_OR_USAGE(argc == 2, "`ouvrir' ne prend pas d'argument.");
     return ouvrir();
   } else if (strcmp(subcommand, "fermer") == 0) {
     DEBUG("Sous-commande `fermer'")
-    TRY_OR_USAGE(argc == 2, "`fermer' ne prend pas d'argument.");
+    ASSERT_OR_USAGE(argc == 2, "`fermer' ne prend pas d'argument.");
     return fermer();
   } else if (strcmp(subcommand, "supprimer") == 0) {
     DEBUG("Sous-commande `supprimer'")
-    TRY_OR_USAGE(argc == 2, "`supprimer' ne prend pas d'argument.");
+    ASSERT_OR_USAGE(argc == 2, "`supprimer' ne prend pas d'argument.");
     return supprimer();
   } else {
     printf("Commande inconnue `%s'\n", subcommand);
