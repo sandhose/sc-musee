@@ -64,7 +64,7 @@ int creer(int capacite, int file) {
   int shmid = create_shm();
   INFO("Création de l'ensemble de sémaphores…");
   (void)create_sem();
-  struct musee *m = get_musee(shmid);
+  struct musee *m = get_musee(shmid, 0);
   m->capacite = capacite;
   m->file = file;
   INFOF("Un musée de capacité %d et de file %d a été créé.", capacite, file);
@@ -74,8 +74,8 @@ int creer(int capacite, int file) {
 int ouvrir(void) {
   INFO("Ouverture du musée…");
   int semid = get_sem();
-  TRY_SYS(semctl(semid, SEM_CLOSED, SETVAL, 0), "semctl");
-  TRY_SYS(semctl(semid, SEM_SLEEP, SETVAL, 0), "semctl");
+  set_sem_value(semid, SEM_CLOSED, 0);
+  set_sem_value(semid, SEM_SLEEP, 0);
   INFO("Le musée est ouvert.");
   return EXIT_SUCCESS;
 }
@@ -83,8 +83,8 @@ int ouvrir(void) {
 int fermer(void) {
   INFO("Fermeture du musée…");
   int semid = get_sem();
-  TRY_SYS(semctl(semid, SEM_CLOSED, SETVAL, 1), "semctl");
-  TRY_SYS(semctl(semid, SEM_SLEEP, SETVAL, 0), "semctl");
+  set_sem_value(semid, SEM_CLOSED, 1);
+  set_sem_value(semid, SEM_SLEEP, 0);
   INFO("Le musée est fermé.");
   return EXIT_SUCCESS;
 }

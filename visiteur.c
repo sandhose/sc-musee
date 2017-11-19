@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
                "La durée doit être un nombre strictement positif.");
   struct timespec t = {sleep_ms / 1000, (sleep_ms % 1000) * 1000};
 
-  struct musee *m = get_musee(get_shm());
+  struct musee *m = get_musee(get_shm(), SHM_RDONLY);
   int semid = get_sem();
 
   int waiting;

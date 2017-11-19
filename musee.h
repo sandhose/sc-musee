@@ -20,9 +20,6 @@
     TRY_SYS(semop(SEMID, s, sizeof(s) / sizeof(struct sembuf)), "semop");      \
   }
 
-// Double expansion technique to convert __LINE__ into string literal
-#define S(x) #x
-#define S_(x) S(x)
 #define TRY(EXPR, MSG)                                                         \
   {                                                                            \
     if (!(EXPR)) {                                                             \
@@ -42,7 +39,7 @@
   }
 
 #ifndef LOG_LEVEL
-#define LOG_LEVEL get_loglevel()
+#define LOG_LEVEL get_log_level()
 #endif
 
 #define LEVEL_FATAL 0
@@ -67,9 +64,19 @@
 #define DEBUG(MSG) LOG(DEBUG, MSG "\n")
 #define DEBUGF(MSG, ...) LOG(DEBUG, MSG "\n", __VA_ARGS__)
 
+// Double expansion technique to convert __LINE__ into string literal
+#define S(x) #x
+#define S_(x) S(x)
+
+#if NO_COLOR
+#define LEVEL_FMT(LEVEL) #LEVEL
+#define LOC_FMT __FILE__ ":" S_(__LINE__)
+#else
 #define LEVEL_FMT(LEVEL) COLOR_##LEVEL " " #LEVEL " \x1b[0m"
-#define FILE_FMT "\x1b[90m" __FILE__ ":" S_(__LINE__) "\x1b[0m"
-#define LOG_FMT(LEVEL, ...) LEVEL_FMT(LEVEL) "\t" FILE_FMT "\t" __VA_ARGS__
+#define LOC_FMT "\x1b[90m" __FILE__ ":" S_(__LINE__) "\x1b[0m"
+#endif
+
+#define LOG_FMT(LEVEL, ...) LEVEL_FMT(LEVEL) "\t" LOC_FMT "\t" __VA_ARGS__
 #define LOG(LEVEL, ...)                                                        \
   {                                                                            \
     if (LEVEL_##LEVEL <= LOG_LEVEL) {                                          \
@@ -78,7 +85,7 @@
     }                                                                          \
   }
 
-int get_loglevel(void);
+int get_log_level(void);
 
 key_t token(void);
 int create_shm(void);
@@ -88,8 +95,10 @@ int get_shm(void);
 int create_sem(void);
 void delete_sem(void);
 int get_sem(void);
+int get_sem_value(int semid, unsigned short which);
+void set_sem_value(int semid, unsigned short which, unsigned short value);
 
-struct musee *get_musee(int);
+struct musee *get_musee(int shmid, int shmflg);
 
 struct musee {
   int capacite;
