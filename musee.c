@@ -43,7 +43,8 @@ void delete_shm(void) {
   TRY_SYS(shmctl(shmid, IPC_RMID, NULL), "shmctl");
 }
 
-struct musee *get_musee(int shmid, int shmflg) {
+struct musee *get_musee(int shmid, bool readonly) {
+  int shmflg = readonly ? SHM_RDONLY : 0;
   void *m;
   TRY((m = shmat(shmid, NULL, shmflg)) != (void *)-1, "shmat");
   return (struct musee *)m;

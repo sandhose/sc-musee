@@ -2,6 +2,7 @@
 
 #include "musee.h"
 
+// Fonctions appelées par `main`, cf. plus bas.
 static int creer(int, int);
 static int ouvrir(void);
 static int fermer(void);
@@ -19,6 +20,8 @@ static void usage(const char *prgname) {
 }
 
 int main(int argc, char *argv[]) {
+  // La fonction main va parser tous les arguments, puis appeler les fonctions
+  // correspondantes.
   DEBUG("Interprétation des arguments.");
   TRY_OR_USAGE(argc > 1, "Il faut au moins un argument.");
 
@@ -64,10 +67,12 @@ int creer(int capacite, int file) {
   int shmid = create_shm();
   INFO("Création de l'ensemble de sémaphores…");
   (void)create_sem();
-  struct musee *m = get_musee(shmid, 0);
+
+  struct musee *m = get_musee(shmid, false);
   m->capacite = capacite;
   m->file = file;
   INFOF("Un musée de capacité %d et de file %d a été créé.", capacite, file);
+
   return EXIT_SUCCESS;
 }
 

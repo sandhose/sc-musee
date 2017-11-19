@@ -9,7 +9,7 @@ static void usage(const char *prgname) {
 
 int main(int argc, char *argv[]) {
   TRY_OR_USAGE(argc == 1, "Ne prend aucun argument.");
-  struct musee *m = get_musee(get_shm(), SHM_RDONLY);
+  struct musee *m = get_musee(get_shm(), true);
   int semid = get_sem();
 
   int waiting, inside, closed, cur_capacite;
